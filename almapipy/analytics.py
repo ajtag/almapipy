@@ -1,6 +1,7 @@
 from .client import Client
 from . import utils
 import xml.etree.ElementTree as ET
+from urllib.parse import unquote
 
 
 class SubClientAnalytics(Client):
@@ -127,7 +128,14 @@ class SubClientAnalyticsReports(Client):
 
                 # just need token and apikey for future calls
                 margs = {'apikey': self.cnxn_params['api_key']}
-                margs['token'] = report[0].find('ResumptionToken').text
+                
+                #primo analytics tokens are returned url-encoded.
+                tok = report[0].find('ResumptionToken').text 
+                if '%' in tok:
+                    margs['token'] = unquote(tok)
+                else:
+                    margs['token'] = 
+
                 margs['format'] = 'xml'
 
                 # find report content in XML report
